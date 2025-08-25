@@ -51,14 +51,20 @@ export default function Header() {
             id="main-nav"
           >
             <Link to="/about">
-              <div className="mx-2 text-center py-2 md:py-1">About</div>
+              <div className="mx-2 text-center py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300">
+                About
+              </div>
             </Link>
             <Link to="/contact">
-              <div className="mx-2 text-center py-2 md:py-1">Contact</div>
+              <div className="mx-2 text-center py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300">
+                Contact
+              </div>
             </Link>
             {!user && (
               <Link to="/login">
-                <div className="md:hidden mx-2 text-center py-2">Login</div>
+                <div className="md:hidden mx-2 text-center py-2 hover:text-cyan-300 transition-all ease-in-out duration-300">
+                  Login
+                </div>
               </Link>
             )}
             {!user && (
@@ -81,7 +87,7 @@ export default function Header() {
         <div className="md:flex">
           {!user && (
             <Link to="/login">
-              <div className="hidden md:block mx-2 text-center py-2 md:py-1">
+              <div className="hidden md:block mx-2 text-center py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300">
                 Login
               </div>
             </Link>

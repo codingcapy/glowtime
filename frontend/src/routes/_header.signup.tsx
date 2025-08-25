@@ -66,12 +66,15 @@ function RouteComponent() {
               name="password"
               required
             />
-            <button className="py-2 px-5 my-5 text-2xl tracking-widest bg-cyan-600 w-[200px] md:w-[300px] mx-auto cursor-pointer">
+            <button className="py-3 px-5 my-5 rounded font-bold tracking-widest bg-cyan-600 w-[200px] md:w-[300px] mx-auto cursor-pointer hover:bg-cyan-300 hover:text-[#202020] transition-all ease-in-out duration-300">
               SIGNUP
             </button>
             <div className="mx-auto">
               Already have an account?{" "}
-              <Link to="/login" className="font-bold">
+              <Link
+                to="/login"
+                className="font-bold hover:text-cyan-300 transition-all ease-in-out duration-300"
+              >
                 Login
               </Link>
             </div>
