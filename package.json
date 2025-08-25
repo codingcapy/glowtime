@@ -13,10 +13,12 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@hono/node-server": "^1.19.0",
     "@hono/zod-validator": "^0.7.2",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.15.5",
     "dotenv": "^17.2.1",
+    "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.4",
     "drizzle-zod": "^0.8.3",
     "hono": "^4.9.4",

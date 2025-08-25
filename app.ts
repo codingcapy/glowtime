@@ -1,4 +1,4 @@
-import { serve } from "bun";
+import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -29,6 +29,7 @@ app.get("/*", async (c) => {
   }
 });
 
+export type ApiRoutes = typeof apiRoutes;
 export default app;
 
 const PORT = parseInt(process.env.PORT!) || 3333;

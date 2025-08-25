@@ -86,18 +86,14 @@ export const usersRouter = new Hono()
         users: [
           {
             userId: "example",
-            username: "example",
             email: "example",
             password: "example",
-            profilePic: "example",
             createdAt: new Date(),
           },
           {
             userId: "example2",
-            username: "example2",
             email: "example2",
             password: "example2",
-            profilePic: null,
             createdAt: new Date(),
           },
         ],
@@ -110,9 +106,7 @@ export const usersRouter = new Hono()
     zValidator(
       "json",
       createInsertSchema(usersTable).omit({
-        username: true,
         email: true,
-        profilePic: true,
         createdAt: true,
       })
     ),

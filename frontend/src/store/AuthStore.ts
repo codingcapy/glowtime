@@ -1,7 +1,7 @@
 import axios from "axios";
 import { create } from "zustand";
 import { setSession } from "../services/jwt.service";
-import { type User } from "../../../schemas/users";
+import { User } from "../../../schemas/users";
 
 const useAuthStore = create<{
   user: User | null;

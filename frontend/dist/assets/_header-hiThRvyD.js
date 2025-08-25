@@ -1,1 +1,0 @@
-import{j as e,O as o}from"./index-9GIXABFZ.js";import{H as s,F as t}from"./Footer-NtQ_95IT.js";function m(){return e.jsxs("div",{className:"flex flex-col min-h-screen",children:[e.jsx(s,{}),e.jsx(o,{}),e.jsx(t,{})]})}export{m as component};
