@@ -40,7 +40,7 @@ export default function Header() {
             <Link to="/">
               <div className="flex">
                 <img src={logoImg} alt="" className="w-[30px] h-auto" />
-                <div className="hidden md:block pl-1 text-cyan-300 mr-2 text-center py-2 md:py-1">
+                <div className="hidden md:block pl-1 text-cyan-300 font-bold mr-2 text-center py-2 md:py-1">
                   GlowTime
                 </div>
               </div>
