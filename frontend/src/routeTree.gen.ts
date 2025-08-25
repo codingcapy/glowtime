@@ -10,17 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteImport } from './routes/main'
-import { Route as AboutRouteImport } from './routes/about'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as HeaderRouteImport } from './routes/_header'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HeaderSignupRouteImport } from './routes/_header.signup'
+import { Route as HeaderLoginRouteImport } from './routes/_header.login'
+import { Route as HeaderContactRouteImport } from './routes/_header.contact'
+import { Route as HeaderAboutRouteImport } from './routes/_header.about'
 
 const MainRoute = MainRouteImport.update({
   id: '/main',
   path: '/main',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HeaderRoute = HeaderRouteImport.update({
+  id: '/_header',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -28,34 +37,91 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HeaderSignupRoute = HeaderSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => HeaderRoute,
+} as any)
+const HeaderLoginRoute = HeaderLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => HeaderRoute,
+} as any)
+const HeaderContactRoute = HeaderContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => HeaderRoute,
+} as any)
+const HeaderAboutRoute = HeaderAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => HeaderRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardRoute
   '/main': typeof MainRoute
+  '/about': typeof HeaderAboutRoute
+  '/contact': typeof HeaderContactRoute
+  '/login': typeof HeaderLoginRoute
+  '/signup': typeof HeaderSignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardRoute
   '/main': typeof MainRoute
+  '/about': typeof HeaderAboutRoute
+  '/contact': typeof HeaderContactRoute
+  '/login': typeof HeaderLoginRoute
+  '/signup': typeof HeaderSignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/_header': typeof HeaderRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/main': typeof MainRoute
+  '/_header/about': typeof HeaderAboutRoute
+  '/_header/contact': typeof HeaderContactRoute
+  '/_header/login': typeof HeaderLoginRoute
+  '/_header/signup': typeof HeaderSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/main'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/main'
+    | '/about'
+    | '/contact'
+    | '/login'
+    | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/main'
-  id: '__root__' | '/' | '/about' | '/main'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/main'
+    | '/about'
+    | '/contact'
+    | '/login'
+    | '/signup'
+  id:
+    | '__root__'
+    | '/'
+    | '/_header'
+    | '/dashboard'
+    | '/main'
+    | '/_header/about'
+    | '/_header/contact'
+    | '/_header/login'
+    | '/_header/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
+  HeaderRoute: typeof HeaderRouteWithChildren
+  DashboardRoute: typeof DashboardRoute
   MainRoute: typeof MainRoute
 }
 
@@ -68,11 +134,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_header': {
+      id: '/_header'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof HeaderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -82,12 +155,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_header/signup': {
+      id: '/_header/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof HeaderSignupRouteImport
+      parentRoute: typeof HeaderRoute
+    }
+    '/_header/login': {
+      id: '/_header/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof HeaderLoginRouteImport
+      parentRoute: typeof HeaderRoute
+    }
+    '/_header/contact': {
+      id: '/_header/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof HeaderContactRouteImport
+      parentRoute: typeof HeaderRoute
+    }
+    '/_header/about': {
+      id: '/_header/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof HeaderAboutRouteImport
+      parentRoute: typeof HeaderRoute
+    }
   }
 }
 
+interface HeaderRouteChildren {
+  HeaderAboutRoute: typeof HeaderAboutRoute
+  HeaderContactRoute: typeof HeaderContactRoute
+  HeaderLoginRoute: typeof HeaderLoginRoute
+  HeaderSignupRoute: typeof HeaderSignupRoute
+}
+
+const HeaderRouteChildren: HeaderRouteChildren = {
+  HeaderAboutRoute: HeaderAboutRoute,
+  HeaderContactRoute: HeaderContactRoute,
+  HeaderLoginRoute: HeaderLoginRoute,
+  HeaderSignupRoute: HeaderSignupRoute,
+}
+
+const HeaderRouteWithChildren =
+  HeaderRoute._addFileChildren(HeaderRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
+  HeaderRoute: HeaderRouteWithChildren,
+  DashboardRoute: DashboardRoute,
   MainRoute: MainRoute,
 }
 export const routeTree = rootRouteImport
