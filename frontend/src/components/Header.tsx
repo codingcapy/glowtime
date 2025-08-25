@@ -88,7 +88,7 @@ export default function Header() {
           )}
           {!user && (
             <Link to="/signup">
-              <div className="hidden md:block mx-2 text-center py-1 px-3 border rounded hover:bg-white hover:text-black ease-in-out duration-300">
+              <div className="hidden md:block mx-2 text-center py-1 px-3 border border-cyan-300 text-cyan-300 rounded hover:bg-cyan-300 hover:text-black ease-in-out duration-300">
                 Signup
               </div>
             </Link>
