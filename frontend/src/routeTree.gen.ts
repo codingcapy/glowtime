@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetRouteImport } from './routes/reset'
 import { Route as MainRouteImport } from './routes/main'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as HeaderRouteImport } from './routes/_header'
@@ -18,6 +19,11 @@ import { Route as HeaderLoginRouteImport } from './routes/_header.login'
 import { Route as HeaderContactRouteImport } from './routes/_header.contact'
 import { Route as HeaderAboutRouteImport } from './routes/_header.about'
 
+const ResetRoute = ResetRouteImport.update({
+  id: '/reset',
+  path: '/reset',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MainRoute = MainRouteImport.update({
   id: '/main',
   path: '/main',
@@ -62,6 +68,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/main': typeof MainRoute
+  '/reset': typeof ResetRoute
   '/about': typeof HeaderAboutRoute
   '/contact': typeof HeaderContactRoute
   '/login': typeof HeaderLoginRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/main': typeof MainRoute
+  '/reset': typeof ResetRoute
   '/about': typeof HeaderAboutRoute
   '/contact': typeof HeaderContactRoute
   '/login': typeof HeaderLoginRoute
@@ -82,6 +90,7 @@ export interface FileRoutesById {
   '/_header': typeof HeaderRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/main': typeof MainRoute
+  '/reset': typeof ResetRoute
   '/_header/about': typeof HeaderAboutRoute
   '/_header/contact': typeof HeaderContactRoute
   '/_header/login': typeof HeaderLoginRoute
@@ -93,6 +102,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/main'
+    | '/reset'
     | '/about'
     | '/contact'
     | '/login'
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/main'
+    | '/reset'
     | '/about'
     | '/contact'
     | '/login'
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
     | '/_header'
     | '/dashboard'
     | '/main'
+    | '/reset'
     | '/_header/about'
     | '/_header/contact'
     | '/_header/login'
@@ -123,10 +135,18 @@ export interface RootRouteChildren {
   HeaderRoute: typeof HeaderRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   MainRoute: typeof MainRoute
+  ResetRoute: typeof ResetRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset': {
+      id: '/reset'
+      path: '/reset'
+      fullPath: '/reset'
+      preLoaderRoute: typeof ResetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/main': {
       id: '/main'
       path: '/main'
@@ -208,6 +228,7 @@ const rootRouteChildren: RootRouteChildren = {
   HeaderRoute: HeaderRouteWithChildren,
   DashboardRoute: DashboardRoute,
   MainRoute: MainRoute,
+  ResetRoute: ResetRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
