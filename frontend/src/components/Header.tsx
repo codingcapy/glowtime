@@ -1,12 +1,14 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import useAuthStore from "../store/AuthStore";
 import { CgProfile } from "react-icons/cg";
 import logoImg from "/logo-glowtime.png";
 
 export default function Header() {
+  const navigate = useNavigate();
   const [navVisible, setNavVisible] = useState(false);
-  const { user } = useAuthStore();
+  const { user, logoutService } = useAuthStore();
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -25,6 +27,12 @@ export default function Header() {
   function slideToggle() {
     if (window.innerWidth < 760) setNavVisible(!navVisible);
   }
+
+  function handleLogout() {
+    logoutService();
+    navigate({ to: "/login" });
+  }
+
   return (
     <header className="fixed top-0 left-0 z-[99] w-screen bg-[#202020] py-5 px-7">
       <div className="md:flex justify-between">
@@ -99,17 +107,24 @@ export default function Header() {
               </div>
             </Link>
           )}
-
           {user && (
-            <Link to="/dashboard">
-              {" "}
-              <div className="hidden md:flex">
-                <CgProfile size={25} className="" />
-                <div className="ml-2 text-xl">{user && user.email}</div>
-              </div>
-            </Link>
+            <div
+              onClick={() => setShowMenu(!showMenu)}
+              className="hidden md:flex cursor-pointer"
+            >
+              <CgProfile size={25} className="" />
+              <div className="ml-2 text-xl">{user && user.email}</div>
+            </div>
           )}
         </div>
+        {showMenu && (
+          <div
+            onClick={handleLogout}
+            className="absolute top-[70px] right-[20px] mx-2 text-center py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
+          >
+            Logout
+          </div>
+        )}
       </div>
     </header>
   );
