@@ -8,6 +8,7 @@ export default function Header() {
   const navigate = useNavigate();
   const [navVisible, setNavVisible] = useState(false);
   const { user, logoutService } = useAuthStore();
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -70,23 +71,24 @@ export default function Header() {
           </div>
         </div>
         <div className="md:flex">
+          {user && (
+            <div
+              onClick={() => setShowMenu(!showMenu)}
+              className="hidden md:flex cursor-pointer"
+            >
+              <CgProfile size={25} className="" />
+              <div className="ml-2 text-xl">{user && user.email}</div>
+            </div>
+          )}
+        </div>
+        {showMenu && (
           <div
             onClick={handleLogout}
-            className="hidden md:block mx-2 text-center py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
+            className="absolute top-[70px] right-[20px] mx-2 text-center py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
           >
             Logout
           </div>
-
-          {user && (
-            <Link to="/dashboard">
-              {" "}
-              <div className="hidden md:flex">
-                <CgProfile size={25} className="" />
-                <div className="ml-2 text-xl">{user && user.email}</div>
-              </div>
-            </Link>
-          )}
-        </div>
+        )}
       </div>
     </header>
   );
