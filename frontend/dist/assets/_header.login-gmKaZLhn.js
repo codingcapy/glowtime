@@ -1,1 +1,0 @@
-import{j as o}from"./index-QGOuIGeJ.js";function e(){return o.jsx("main",{className:"flex-1 p-10 pt-[80px]",children:'Hello "/login"!'})}export{e as component};

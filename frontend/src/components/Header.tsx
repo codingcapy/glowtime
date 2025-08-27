@@ -118,11 +118,19 @@ export default function Header() {
           )}
         </div>
         {showMenu && (
-          <div
-            onClick={handleLogout}
-            className="absolute top-[70px] right-[20px] mx-2 text-center py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
-          >
-            Logout
+          <div className="absolute top-[70px] right-[100px] mx-2 py-2 md:py-1">
+            <Link
+              to="/dashboard"
+              className="py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
+            >
+              Dashboard
+            </Link>
+            <div
+              onClick={handleLogout}
+              className="py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
+            >
+              Logout
+            </div>
           </div>
         )}
       </div>
