@@ -58,25 +58,25 @@ export default function Header() {
             className={`${navVisible ? "visible" : ""} md:flex`}
             id="main-nav"
           >
-            <Link to="/about">
+            <Link onClick={slideToggle} to="/about">
               <div className="mx-2 text-center py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300">
                 About
               </div>
             </Link>
-            <Link to="/contact">
+            <Link onClick={slideToggle} to="/contact">
               <div className="mx-2 text-center py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300">
                 Contact
               </div>
             </Link>
             {!user && (
-              <Link to="/login">
+              <Link onClick={slideToggle} to="/login">
                 <div className="md:hidden mx-2 text-center py-2 hover:text-cyan-300 transition-all ease-in-out duration-300">
                   Login
                 </div>
               </Link>
             )}
             {!user && (
-              <Link to="/signup">
+              <Link onClick={slideToggle} to="/signup">
                 <div className="md:hidden mx-2 text-center py-2">Signup</div>
               </Link>
             )}
