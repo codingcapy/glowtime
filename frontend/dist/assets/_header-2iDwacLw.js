@@ -1,1 +1,0 @@
-import{j as o,O as e}from"./index-DiLgR58M.js";import{H as s,F as t}from"./Footer-D0-MC6_N.js";import"./AuthStore-Ct7UTUjc.js";import"./logo-glowtime-BN818JJt.js";function x(){return o.jsxs("div",{className:"flex flex-col min-h-screen",children:[o.jsx(s,{}),o.jsx(e,{}),o.jsx(t,{})]})}export{x as component};
