@@ -38,7 +38,7 @@ export default function Header() {
       <div className="md:flex justify-between">
         <div className="md:flex">
           <div className="flex justify-between">
-            <Link to="/">
+            <Link onClick={slideToggle} to="/">
               <div className="flex">
                 <img src={logoImg} alt="" className="w-[30px] h-auto" />
                 <div className="hidden md:block pl-1 text-cyan-300 font-bold mr-2 text-center py-2 md:py-1">
@@ -59,14 +59,19 @@ export default function Header() {
             id="main-nav"
           >
             {user && (
-              <Link to="/signup">
-                <div className="md:hidden flex flex-col">
-                  <div className="flex mx-auto">
-                    <CgProfile size={25} className="" />
-                    <div className="ml-2 text-xl">{user && user.email}</div>
-                  </div>
+              <Link onClick={slideToggle} to="/dashboard">
+                <div className="md:hidden mx-2 text-center py-2 hover:text-cyan-300 transition-all ease-in-out duration-300">
+                  Dashboard
                 </div>
               </Link>
+            )}
+            {user && (
+              <div
+                onClick={handleLogout}
+                className="md:hidden mx-2 text-center py-2 hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
+              >
+                Logout
+              </div>
             )}
           </div>
         </div>
