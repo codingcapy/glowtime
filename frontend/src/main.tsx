@@ -13,14 +13,14 @@ const router = createRouter({
   defaultNotFoundComponent: () => {
     return (
       <div className="flex flex-col min-h-screen">
-        <main className="flex-1 bg-[#040406] text-white p-3 pt-[100px]">
+        <main className="flex-1 p-3 pt-[100px]">
           <p className="text-white text-xl md:text-4xl text-center pt-10 md:pt-32">
             Whoops! This isn't what you're looking for 😅
           </p>
           <div className="flex flex-col my-10 md:my-20 mx-auto w-[250px]">
             <Link
               to="/"
-              className="py-2 px-10 rounded bg-cyan-600 text-center tracking-widest"
+              className="py-2 px-10 rounded bg-cyan-600 text-center tracking-widest hover:bg-cyan-300 hover:text-[#202020] transition-all ease-in-out duration-300"
             >
               LET'S GO HOME
             </Link>

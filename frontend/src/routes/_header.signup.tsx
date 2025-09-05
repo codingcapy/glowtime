@@ -4,10 +4,10 @@ import useAuthStore from "../store/AuthStore";
 import { useCreateUserMutation } from "../lib/api/user";
 
 export const Route = createFileRoute("/_header/signup")({
-  component: RouteComponent,
+  component: SignupPage,
 });
 
-function RouteComponent() {
+function SignupPage() {
   const navigate = useNavigate();
   const [loadingNotification, setLoadingNotification] = useState("");
   const { mutate: createUser } = useCreateUserMutation();

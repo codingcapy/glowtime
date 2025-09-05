@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_header/about")({
-  component: RouteComponent,
+  component: AboutPage,
 });
 
-function RouteComponent() {
+function AboutPage() {
   return (
     <main className="flex-1 p-10 pt-[80px] text-center max-w-[1000px] mx-auto">
       <div className="mb-10">

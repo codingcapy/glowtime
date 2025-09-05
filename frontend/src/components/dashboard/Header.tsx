@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAuthStore from "../../store/AuthStore";
 import { CgProfile } from "react-icons/cg";
 import logoImg from "/logo-glowtime.png";
@@ -9,6 +9,12 @@ export default function Header() {
   const [navVisible, setNavVisible] = useState(false);
   const { user, logoutService } = useAuthStore();
   const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [contextMenu, setContextMenu] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+  } | null>(null);
 
   useEffect(() => {
     function handleResize() {
@@ -32,6 +38,17 @@ export default function Header() {
     logoutService();
     navigate({ to: "/login" });
   }
+
+  function handleClickOutside(event: MouseEvent) {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setContextMenu(null);
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 z-[99] w-screen bg-[#202020] py-5 px-7">
@@ -87,7 +104,10 @@ export default function Header() {
           )}
         </div>
         {showMenu && (
-          <div className="absolute top-[70px] right-[100px] mx-2 py-2 md:py-1">
+          <div
+            className="absolute top-[70px] right-[100px] px-2 py-2 md:px-10 md:py-1 bg-[#202020]"
+            ref={menuRef}
+          >
             <Link
               to="/dashboard"
               className="py-2 md:py-1 text-center hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
@@ -96,7 +116,7 @@ export default function Header() {
             </Link>
             <div
               onClick={handleLogout}
-              className="absolute py-2 md:py-1 text-center hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
+              className="py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
             >
               Logout
             </div>

@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import useAuthStore from "../store/AuthStore";
 
 export const Route = createFileRoute("/_header/login")({
-  component: RouteComponent,
+  component: LoginPage,
 });
 
-function RouteComponent() {
+function LoginPage() {
   const navigate = useNavigate();
   const [loadingNotification, setLoadingNotification] = useState("");
   const [notification, setNotification] = useState("");

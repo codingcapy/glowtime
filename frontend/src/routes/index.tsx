@@ -4,10 +4,10 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 export const Route = createFileRoute("/")({
-  component: RouteComponent,
+  component: HomePage,
 });
 
-function RouteComponent() {
+function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />

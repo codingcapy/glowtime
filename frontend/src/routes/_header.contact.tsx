@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_header/contact")({
-  component: RouteComponent,
+  component: ContactPage,
 });
 
-function RouteComponent() {
+function ContactPage() {
   return (
     <main className="flex-1 p-10 pt-[80px] max-w-[800px] mx-auto">
       <h1 className="pb-5 text-center text-4xl md:text-6xl font-bold">

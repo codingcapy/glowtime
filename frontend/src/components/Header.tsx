@@ -123,7 +123,7 @@ export default function Header() {
           )}
         </div>
         {showMenu && (
-          <div className="absolute top-[70px] right-[100px] mx-2 py-2 md:py-1">
+          <div className="absolute top-[70px] right-[100px] mx-2 py-2 md:py-1 bg-[#202020]">
             <Link
               to="/dashboard"
               className="py-2 md:py-1 hover:text-cyan-300 transition-all ease-in-out duration-300 cursor-pointer"
