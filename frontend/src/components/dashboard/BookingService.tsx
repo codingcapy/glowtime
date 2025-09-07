@@ -34,28 +34,21 @@ export default function BookingService(props: {
   return (
     <div
       ref={bookingServiceRef}
-      className="absolute top-0 right-0 bg-[#202020] z-[100] min-h-screen p-3 flex flex-col gap-4"
+      className="absolute top-0 right-[-10px] bg-[#202020] z-[100] min-h-screen p-5 flex flex-col gap-4"
     >
-      <DayPicker mode="single" />
-      <div className="grid grid-cols-4 gap-2">
-        {["09:00", "10:00", "11:00", "14:00", "15:00"].map((slot) => (
-          <button
-            key={slot}
-            onClick={() => setTime(slot)}
-            className={`p-2 rounded ${
-              time === slot ? "bg-cyan-600 text-white" : "bg-gray-200"
-            }`}
-          >
-            {slot}
-          </button>
-        ))}
-      </div>
-      <button
-        onClick={handleSubmit}
-        className="mt-4 p-3 bg-cyan-600 text-white rounded-lg"
-      >
-        Confirm Appointment
-      </button>
+      <form className="flex flex-col">
+        <h2 className="text-2xl font-bold mt-5">Select a Service</h2>
+        <div>Search service</div>
+        <div className="text-xl font-bold mt-5">Hair Salon</div>
+        <div className="my-1 p-1">Hair cut</div>
+        <div className="my-1 p-1">Hair dye</div>
+        <div className="text-xl font-bold mt-5">Nail Salon</div>
+        <div className="text-xl font-bold mt-5">Makeup Salon</div>
+        <h2 className="text-2xl font-bold mt-5">Select a Time</h2>
+        <button className="px-5 py-3 mt-5 bg-cyan-600 rounded font-bold text-center hover:bg-cyan-300 hover:text-[#202020] transition-all ease-in-out duration-300 mx-auto w-[300px]">
+          Save
+        </button>
+      </form>
     </div>
   );
 }

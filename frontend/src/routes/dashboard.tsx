@@ -66,11 +66,12 @@ function Dashboard() {
           selectable={true}
           events={events}
           eventClick={(info) => {
+            console.log("clicked event");
             setContextMenu({
               title: info.event.title,
               visible: true,
-              x: info.jsEvent.clientX - 250,
-              y: info.jsEvent.clientY - 50,
+              x: info.jsEvent.clientX,
+              y: info.jsEvent.clientY,
             });
           }}
           dateClick={(info) => {
