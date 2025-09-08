@@ -17,4 +17,4 @@ export const appointments = pgTable("appointments", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export type User = InferSelectModel<typeof appointments>;
+export type Appointment = InferSelectModel<typeof appointments>;

@@ -26,7 +26,7 @@ export const appointmentsRouter = new Hono()
         cause: appointmentsQueryError,
       });
     }
-    return c.json({ chats: appointmentsQueryResult });
+    return c.json({ appointments: appointmentsQueryResult });
   })
   .post(
     "/",
@@ -55,10 +55,42 @@ export const appointmentsRouter = new Hono()
       if (appointmentInsertError) {
         console.log("Error while creating appointment");
         throw new HTTPException(500, {
-          message: "Error while creating chat",
+          message: "Error while creating appointment",
           cause: appointmentInsertError,
         });
       }
-      return c.json({ user: appointmentInsertResult[0] }, 200);
+      return c.json({ appointment: appointmentInsertResult[0] }, 200);
     }
-  );
+  )
+  .get("/", async (c) => {
+    const { result: appointmentsQueryResult, error: appointmentsQueryError } =
+      await mightFail(db.select().from(appointmentsTable));
+    if (appointmentsQueryError) {
+      throw new HTTPException(500, {
+        message: "Error occurred when fetching user appointments.",
+        cause: appointmentsQueryError,
+      });
+    }
+    return c.json({
+      appointments: [
+        {
+          appointmentId: 0,
+          userId: "user1",
+          date: new Date(),
+          type: "hair",
+          duration: 123,
+          price: 123,
+          createdAt: new Date(),
+        },
+        {
+          appointmentId: 1,
+          userId: "user2",
+          date: new Date(),
+          type: "nail",
+          duration: 987,
+          price: 987,
+          createdAt: new Date(),
+        },
+      ],
+    });
+  });

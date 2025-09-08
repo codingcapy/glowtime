@@ -5,6 +5,7 @@ import { logger } from "hono/logger";
 import { serveStatic } from "hono/bun";
 import { usersRouter } from "./routes/users";
 import { userRouter } from "./routes/user";
+import { appointmentsRouter } from "./routes/appointments";
 
 console.log("Hello via Bun!");
 
@@ -16,7 +17,8 @@ app.use("*", cors());
 const apiRoutes = app
   .basePath("/api/v0")
   .route("/users", usersRouter)
-  .route("/user", userRouter);
+  .route("/user", userRouter)
+  .route("/appointments", appointmentsRouter);
 
 app.use("/*", serveStatic({ root: "./frontend/dist" }));
 app.get("/*", async (c) => {
