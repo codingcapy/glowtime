@@ -10,12 +10,26 @@ import BookingService from "../components/dashboard/BookingService";
 import useAuthStore from "../store/AuthStore";
 import { useQuery } from "@tanstack/react-query";
 import { getAppointmentsByUserIdQueryOptions } from "../lib/api/appointment";
+import { Appointment } from "../../../schemas/appointments";
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
 });
 
 export type GridMode = "dayGridMonth" | "timeGridWeek" | "timeGridDay";
+
+function mapAppointmentsToEvents(appointments: Appointment[]) {
+  return appointments.map((a) => {
+    const start = new Date(a.date);
+    const end = new Date(start.getTime() + a.duration * 60 * 1000); // add minutes
+    return {
+      id: String(a.appointmentId),
+      title: a.type, // or something fancier like `${a.type} ($${a.price})`
+      start,
+      end,
+    };
+  });
+}
 
 function Dashboard() {
   const { user } = useAuthStore((state) => state);
@@ -28,6 +42,9 @@ function Dashboard() {
   const { data: appointments } = useQuery(
     getAppointmentsByUserIdQueryOptions(user?.userId || "")
   );
+
+  const eventsData = appointments ? mapAppointmentsToEvents(appointments) : [];
+
   const [events, setEvents] = useState([
     {
       id: "1",
