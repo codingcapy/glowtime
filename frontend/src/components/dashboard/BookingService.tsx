@@ -1,14 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { DayPicker } from "react-day-picker";
+import useAuthStore from "../../store/AuthStore";
+import { useCreateAppointmentMutation } from "../../lib/api/appointment";
+import { GridMode } from "../../routes/dashboard";
+
+type AppointmentSubtype = "haircut" | "hairdye";
 
 export default function BookingService(props: {
   setShowBookingService: (state: boolean) => void;
   containerRef: React.RefObject<HTMLDivElement | null>;
+  selectedDate: string | null;
+  gridType: GridMode;
 }) {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { user } = useAuthStore((state) => state);
+  const { mutate: createAppointment } = useCreateAppointmentMutation();
+  const [subtype, setSubtype] = useState<AppointmentSubtype>("haircut");
   const [time, setTime] = useState<string>("");
   const bookingServiceRef = useRef<HTMLDivElement | null>(null);
+  const [notification, setNotification] = useState("");
+  const [successNotification, setSuccessNotification] = useState("");
 
   function handleClickOutside(event: MouseEvent) {
     if (
@@ -24,27 +33,95 @@ export default function BookingService(props: {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const handleSubmit = () => {
-    if (!selectedDate || !time) return;
-    const [hours, minutes] = time.split(":").map(Number);
-    const dateTime = new Date(selectedDate);
-    dateTime.setHours(hours, minutes);
-  };
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    if (!props.selectedDate) return;
+    let duration = 0;
+    switch (subtype) {
+      case "haircut": {
+        duration = 45;
+        break;
+      }
+      case "hairdye": {
+        duration = 60;
+      }
+    }
+    let price = 0;
+    switch (subtype) {
+      case "haircut": {
+        price = 40;
+        break;
+      }
+      case "hairdye": {
+        price = 50;
+      }
+    }
+    const inputDate = props.selectedDate;
+    const inputTime = time;
+    const [hours, minutes] = inputTime.split(":").map(Number);
+    const date = new Date(inputDate); // this will be at midnight local time
+    date.setHours(hours, minutes, 0, 0);
+    createAppointment(
+      {
+        userId: user!.userId,
+        date: date,
+        type: subtype,
+        duration: duration,
+        price: price,
+      },
+      {
+        onSuccess: (result) => {
+          setNotification("");
+          setSuccessNotification("Appointment added successfully!");
+        },
+        onError: (errorMessage) => setNotification(errorMessage.toString()),
+      }
+    );
+  }
 
   return (
     <div
       ref={bookingServiceRef}
       className="absolute top-0 right-[-10px] bg-[#202020] z-[100] min-h-screen p-5 flex flex-col gap-4"
     >
-      <form className="flex flex-col">
+      <form onSubmit={handleSubmit} className="flex flex-col">
         <h2 className="text-2xl font-bold mt-5">Select a Service</h2>
-        <div>Search service</div>
+        <div className="my-2">
+          <input
+            type="text"
+            placeholder="Search service"
+            className="px-2 py-1 outline-none border border-[#5a5a5a]"
+          />
+        </div>
         <div className="text-xl font-bold mt-5">Hair Salon</div>
-        <div className="my-1 p-1">Hair cut</div>
-        <div className="my-1 p-1">Hair dye</div>
+        <div onClick={() => setSubtype("haircut")} className="my-1 p-1">
+          Hair cut
+        </div>
+        <div onClick={() => setSubtype("hairdye")} className="my-1 p-1">
+          Hair dye
+        </div>
         <div className="text-xl font-bold mt-5">Nail Salon</div>
         <div className="text-xl font-bold mt-5">Makeup Salon</div>
-        <h2 className="text-2xl font-bold mt-5">Select a Time</h2>
+        {props.gridType === "dayGridMonth" && (
+          <div className="mt-5">
+            <h2 className="text-2xl font-bold">Select a Time</h2>
+            {Array.from({ length: 12 }).map((_, i) => {
+              const hour = 9 + Math.floor(i / 4); // start at 9 AM
+              const minute = (i % 4) * 15;
+              const time = `${hour.toString().padStart(2, "0")}:${minute
+                .toString()
+                .padStart(2, "0")}`;
+              return (
+                <div
+                  key={time}
+                  onClick={() => setTime(time)}
+                  className="cursor-pointer hover:bg-gray-600 p-2 rounded"
+                >
+                  {time}
+                </div>
+              );
+            })}
+          </div>
+        )}
         <button className="px-5 py-3 mt-5 bg-cyan-600 rounded font-bold text-center hover:bg-cyan-300 hover:text-[#202020] transition-all ease-in-out duration-300 mx-auto w-[300px]">
           Save
         </button>

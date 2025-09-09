@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import Header from "../components/dashboard/Header";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -7,12 +7,27 @@ import interactionPlugin from "@fullcalendar/interaction"; // drag, click
 import { useEffect, useRef, useState } from "react";
 import { LuCalendar } from "react-icons/lu";
 import BookingService from "../components/dashboard/BookingService";
+import useAuthStore from "../store/AuthStore";
+import { useQuery } from "@tanstack/react-query";
+import { getAppointmentsByUserIdQueryOptions } from "../lib/api/appointment";
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
 });
 
+export type GridMode = "dayGridMonth" | "timeGridWeek" | "timeGridDay";
+
 function Dashboard() {
+  const { user } = useAuthStore((state) => state);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) navigate({ to: "/" });
+  }, []);
+
+  const { data: appointments } = useQuery(
+    getAppointmentsByUserIdQueryOptions(user?.userId || "")
+  );
   const [events, setEvents] = useState([
     {
       id: "1",
@@ -30,12 +45,15 @@ function Dashboard() {
   const [contextMenu, setContextMenu] = useState<{
     title: string;
     visible: boolean;
+    isEvent: boolean;
     x: number;
     y: number;
   } | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [showBookingService, setShowBookingService] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [gridType, setGridType] = useState<GridMode>("dayGridMonth");
 
   function handleClickOutside(event: MouseEvent) {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -54,7 +72,7 @@ function Dashboard() {
         <Header />
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="timeGridWeek"
+          initialView="dayGridMonth"
           headerToolbar={{
             left: "prev,next today",
             center: "title",
@@ -66,18 +84,22 @@ function Dashboard() {
           selectable={true}
           events={events}
           eventClick={(info) => {
-            console.log("clicked event");
+            info.jsEvent.preventDefault();
+            info.jsEvent.stopPropagation();
             setContextMenu({
               title: info.event.title,
               visible: true,
+              isEvent: true,
               x: info.jsEvent.clientX,
               y: info.jsEvent.clientY,
             });
           }}
           dateClick={(info) => {
+            setSelectedDate(info.dateStr);
             setContextMenu({
               title: info.dateStr,
               visible: true,
+              isEvent: false,
               x: info.jsEvent.clientX - 250,
               y: info.jsEvent.clientY - 50,
             });
@@ -96,13 +118,23 @@ function Dashboard() {
               {contextMenu.title}
             </div>
             <div className="p-1">
-              <div
-                onClick={() => setShowBookingService(true)}
-                className="flex p-3 cursor-pointer hover:bg-[#5b5b5b] transition-all ease-in-out duration-300"
-              >
-                <LuCalendar className="mr-2 mt-1" />
-                <div>Add appointment</div>
-              </div>
+              {contextMenu.isEvent ? (
+                <div
+                  onClick={() => setShowBookingService(true)}
+                  className="flex p-3 cursor-pointer hover:bg-[#5b5b5b] transition-all ease-in-out duration-300"
+                >
+                  <LuCalendar className="mr-2 mt-1" />
+                  <div>Edit Appointment</div>
+                </div>
+              ) : (
+                <div
+                  onClick={() => setShowBookingService(true)}
+                  className="flex p-3 cursor-pointer hover:bg-[#5b5b5b] transition-all ease-in-out duration-300"
+                >
+                  <LuCalendar className="mr-2 mt-1" />
+                  <div>Add appointment</div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -110,6 +142,8 @@ function Dashboard() {
           <BookingService
             setShowBookingService={setShowBookingService}
             containerRef={containerRef}
+            selectedDate={selectedDate}
+            gridType={gridType}
           />
         )}
       </main>
