@@ -61,22 +61,23 @@ export default function BookingService(props: {
     const [hours, minutes] = inputTime.split(":").map(Number);
     const date = new Date(inputDate); // this will be at midnight local time
     date.setHours(hours, minutes, 0, 0);
-    createAppointment(
-      {
-        userId: user!.userId,
-        date: date,
-        type: subtype,
-        duration: duration,
-        price: price,
+    const newAppointment = {
+      userId: user!.userId,
+      date: date.toISOString(),
+      type: subtype,
+      duration: duration,
+      price: price,
+    };
+    createAppointment(newAppointment, {
+      onSuccess: (result) => {
+        setNotification("");
+        setSuccessNotification("Appointment added successfully!");
       },
-      {
-        onSuccess: (result) => {
-          setNotification("");
-          setSuccessNotification("Appointment added successfully!");
-        },
-        onError: (errorMessage) => setNotification(errorMessage.toString()),
-      }
-    );
+      onError: (errorMessage) => {
+        setNotification(errorMessage.toString());
+        console.log(newAppointment);
+      },
+    });
   }
 
   return (

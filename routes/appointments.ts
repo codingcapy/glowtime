@@ -6,6 +6,7 @@ import { HTTPException } from "hono/http-exception";
 import { eq } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
 import { createInsertSchema } from "drizzle-zod";
+import z from "zod";
 
 export const appointmentsRouter = new Hono()
   .get("/:userId", async (c) => {
@@ -32,20 +33,28 @@ export const appointmentsRouter = new Hono()
     "/",
     zValidator(
       "json",
-      createInsertSchema(appointmentsTable).omit({
-        appointmentId: true,
-        createdAt: true,
-      })
+      createInsertSchema(appointmentsTable)
+        .omit({
+          appointmentId: true,
+          createdAt: true,
+        })
+        .extend({
+          date: z.union([z.date(), z.string().datetime()]),
+        })
     ),
     async (c) => {
       const insertValues = c.req.valid("json");
+      const appointmentDate =
+        typeof insertValues.date === "string"
+          ? new Date(insertValues.date)
+          : insertValues.date;
       const { error: appointmentInsertError, result: appointmentInsertResult } =
         await mightFail(
           db
             .insert(appointmentsTable)
             .values({
               userId: insertValues.userId,
-              date: insertValues.date,
+              date: appointmentDate,
               type: insertValues.type,
               duration: insertValues.duration,
               price: insertValues.price,

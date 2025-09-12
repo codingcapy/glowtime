@@ -29,8 +29,11 @@ async function createAppointment(args: CreateAppointmentArgs) {
   if (!res.ok) {
     let errorMessage =
       "There was an issue creating your appointment :( We'll look into it ASAP!";
+    console.log(args);
     try {
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
     throw new Error(errorMessage);
   }
   const result = await res.json();
