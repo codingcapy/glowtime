@@ -14,7 +14,7 @@ export default function BookingService(props: {
   const { user } = useAuthStore((state) => state);
   const { mutate: createAppointment } = useCreateAppointmentMutation();
   const [subtype, setSubtype] = useState<AppointmentSubtype>("haircut");
-  const [time, setTime] = useState<string>("");
+  const [selectedTime, setSelectedTime] = useState<string>("");
   const bookingServiceRef = useRef<HTMLDivElement | null>(null);
   const [notification, setNotification] = useState("");
   const [successNotification, setSuccessNotification] = useState("");
@@ -34,6 +34,7 @@ export default function BookingService(props: {
   }, []);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     if (!props.selectedDate) return;
     let duration = 0;
     switch (subtype) {
@@ -56,7 +57,7 @@ export default function BookingService(props: {
       }
     }
     const inputDate = props.selectedDate;
-    const inputTime = time;
+    const inputTime = selectedTime;
     const [hours, minutes] = inputTime.split(":").map(Number);
     const date = new Date(inputDate); // this will be at midnight local time
     date.setHours(hours, minutes, 0, 0);
@@ -93,10 +94,16 @@ export default function BookingService(props: {
           />
         </div>
         <div className="text-xl font-bold mt-5">Hair Salon</div>
-        <div onClick={() => setSubtype("haircut")} className="my-1 p-1">
+        <div
+          onClick={() => setSubtype("haircut")}
+          className={`my-1 p-1 cursor-pointer hover:bg-[#686868] transition-all ease-in-out duration-300 ${subtype === "haircut" && "bg-[#636363]"}`}
+        >
           Hair cut
         </div>
-        <div onClick={() => setSubtype("hairdye")} className="my-1 p-1">
+        <div
+          onClick={() => setSubtype("hairdye")}
+          className={`my-1 p-1 cursor-pointer hover:bg-[#686868] transition-all ease-in-out duration-300 ${subtype === "hairdye" && "bg-[#636363]"}`}
+        >
           Hair dye
         </div>
         <div className="text-xl font-bold mt-5">Nail Salon</div>
@@ -113,8 +120,8 @@ export default function BookingService(props: {
               return (
                 <div
                   key={time}
-                  onClick={() => setTime(time)}
-                  className="cursor-pointer hover:bg-gray-600 p-2 rounded"
+                  onClick={() => setSelectedTime(time)}
+                  className={`cursor-pointer hover:bg-gray-600 p-2 rounded ${selectedTime === time && "bg-[636363]"}`}
                 >
                   {time}
                 </div>
@@ -126,6 +133,8 @@ export default function BookingService(props: {
           Save
         </button>
       </form>
+      <p className="text-center text-red-500">{notification}</p>
+      <p className="text-center text-green-500">{successNotification}</p>
     </div>
   );
 }

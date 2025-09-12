@@ -8,6 +8,13 @@
       "when": 1756094685450,
       "tag": "0000_mushy_tyrannus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757703868268,
+      "tag": "0001_daily_kabuki",
+      "breakpoints": true
     }
   ]
 }
