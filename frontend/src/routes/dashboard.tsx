@@ -45,20 +45,6 @@ function Dashboard() {
 
   const eventsData = appointments ? mapAppointmentsToEvents(appointments) : [];
 
-  const [events, setEvents] = useState([
-    {
-      id: "1",
-      title: "Hair Cut (Men)",
-      start: new Date().toISOString(),
-      end: new Date(new Date().getTime() + 30 * 60000).toISOString(),
-    },
-    {
-      id: "2",
-      title: "Hair Cut (Women)",
-      start: new Date(new Date().getTime() + 60 * 60000).toISOString(),
-      end: new Date(new Date().getTime() + 120 * 60000).toISOString(),
-    },
-  ]);
   const [contextMenu, setContextMenu] = useState<{
     title: string;
     visible: boolean;
@@ -99,26 +85,33 @@ function Dashboard() {
           slotMaxTime="20:00:00"
           editable={true}
           selectable={true}
-          events={events}
+          events={eventsData}
+          datesSet={(arg) => {
+            setGridType(arg.view.type as GridMode);
+          }}
           eventClick={(info) => {
+            const rect = containerRef.current?.getBoundingClientRect();
+            const scrollTop = containerRef.current?.scrollTop || 0;
             info.jsEvent.preventDefault();
             info.jsEvent.stopPropagation();
             setContextMenu({
               title: info.event.title,
               visible: true,
               isEvent: true,
-              x: info.jsEvent.clientX,
-              y: info.jsEvent.clientY,
+              x: info.jsEvent.clientX - (rect?.left ?? 0) - 250,
+              y: info.jsEvent.clientY - (rect?.top ?? 0) + scrollTop - 5,
             });
           }}
           dateClick={(info) => {
+            const rect = containerRef.current?.getBoundingClientRect();
+            const scrollTop = containerRef.current?.scrollTop || 0;
             setSelectedDate(info.dateStr);
             setContextMenu({
               title: info.dateStr,
               visible: true,
               isEvent: false,
-              x: info.jsEvent.clientX - 250,
-              y: info.jsEvent.clientY - 50,
+              x: info.jsEvent.clientX - (rect?.left ?? 0) - 250,
+              y: info.jsEvent.clientY - (rect?.top ?? 0) + scrollTop - 50,
             });
           }}
         />
