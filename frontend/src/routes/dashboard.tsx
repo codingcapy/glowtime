@@ -56,6 +56,7 @@ function Dashboard() {
   const [showBookingService, setShowBookingService] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string>("");
   const [gridType, setGridType] = useState<GridMode>("dayGridMonth");
 
   function handleClickOutside(event: MouseEvent) {
@@ -105,9 +106,17 @@ function Dashboard() {
           dateClick={(info) => {
             const rect = containerRef.current?.getBoundingClientRect();
             const scrollTop = containerRef.current?.scrollTop || 0;
-            setSelectedDate(info.dateStr);
+            const clickedDate = info.date;
+            const dateStr = clickedDate.toISOString().split("T")[0]; // YYYY-MM-DD
+            const timeStr = clickedDate.toTimeString().slice(0, 5); // HH:mm
+            setSelectedDate(dateStr);
+            if (gridType === "timeGridWeek" || gridType === "timeGridDay") {
+              setSelectedTime(timeStr);
+            } else {
+              setSelectedTime("");
+            }
             setContextMenu({
-              title: info.dateStr,
+              title: `${dateStr} ${gridType !== "dayGridMonth" ? timeStr : ""}`,
               visible: true,
               isEvent: false,
               x: info.jsEvent.clientX - (rect?.left ?? 0) - 250,
@@ -152,6 +161,8 @@ function Dashboard() {
           <BookingService
             setShowBookingService={setShowBookingService}
             containerRef={containerRef}
+            selectedTime={selectedTime}
+            setSelectedTime={setSelectedTime}
             selectedDate={selectedDate}
             gridType={gridType}
           />

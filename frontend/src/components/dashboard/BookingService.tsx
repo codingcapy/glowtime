@@ -9,12 +9,13 @@ export default function BookingService(props: {
   setShowBookingService: (state: boolean) => void;
   containerRef: React.RefObject<HTMLDivElement | null>;
   selectedDate: string | null;
+  selectedTime: string;
+  setSelectedTime: React.Dispatch<React.SetStateAction<string>>;
   gridType: GridMode;
 }) {
   const { user } = useAuthStore((state) => state);
   const { mutate: createAppointment } = useCreateAppointmentMutation();
   const [subtype, setSubtype] = useState<AppointmentSubtype>("haircut");
-  const [selectedTime, setSelectedTime] = useState<string>("");
   const bookingServiceRef = useRef<HTMLDivElement | null>(null);
   const [notification, setNotification] = useState("");
 
@@ -36,7 +37,7 @@ export default function BookingService(props: {
     e.preventDefault();
     if (
       !props.selectedDate ||
-      (props.gridType === "dayGridMonth" && selectedTime === "")
+      (props.gridType === "dayGridMonth" && props.selectedTime === "")
     )
       return setNotification("Please select a time");
     let duration = 0;
@@ -61,7 +62,7 @@ export default function BookingService(props: {
     }
     const inputDate = props.selectedDate;
     const [year, month, day] = inputDate.split("-").map(Number);
-    const inputTime = selectedTime;
+    const inputTime = props.selectedTime;
     const [hours, minutes] = inputTime.split(":").map(Number);
     const date = new Date(year, month - 1, day, hours, minutes, 0, 0);
     date.setHours(hours, minutes, 0, 0);
@@ -131,8 +132,8 @@ export default function BookingService(props: {
               return (
                 <div
                   key={time}
-                  onClick={() => setSelectedTime(time)}
-                  className={`cursor-pointer hover:bg-gray-600 p-2 rounded ${selectedTime === time && "bg-[#636363]"}`}
+                  onClick={() => props.setSelectedTime(time)}
+                  className={`cursor-pointer hover:bg-gray-600 p-2 rounded ${props.selectedTime === time && "bg-[#636363]"}`}
                 >
                   {time}
                 </div>
@@ -140,8 +141,8 @@ export default function BookingService(props: {
             })}
           </div>
         )}
-        <div className="fixed bottom-0 right-0 bg-[#202020] w-[250px] h-[120px] flex flex-col">
-          <button className="px-5 py-3 mt-5 bg-cyan-600 rounded font-bold text-center hover:bg-cyan-300 hover:text-[#202020] transition-all ease-in-out duration-300 mx-auto w-[100px]">
+        <div className="fixed bottom-0 right-0 bg-[#202020] w-[243px] h-[120px] flex flex-col">
+          <button className="px-5 py-3 mt-5 bg-cyan-600 rounded font-bold text-center hover:bg-cyan-300 hover:text-[#202020] transition-all ease-in-out duration-300 mx-auto w-[200px]">
             Save
           </button>
           <p
