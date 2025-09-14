@@ -3,7 +3,7 @@ import { mightFail } from "might-fail";
 import { db } from "../db";
 import { appointments as appointmentsTable } from "../schemas/appointments";
 import { HTTPException } from "hono/http-exception";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
 import { createInsertSchema } from "drizzle-zod";
 import z from "zod";
@@ -102,4 +102,58 @@ export const appointmentsRouter = new Hono()
         },
       ],
     });
-  });
+  })
+  .post(
+    "/delete",
+    zValidator(
+      "json",
+      createInsertSchema(appointmentsTable).omit({
+        date: true,
+        type: true,
+        duration: true,
+        price: true,
+        createdAt: true,
+      })
+    ),
+    async (c) => {
+      const deleteValues = c.req.valid("json");
+      if (!deleteValues.userId) {
+        return c.json({ error: "userId parameter is required." }, 400);
+      }
+      const { error: appointmentDeleteError, result: appointmentDeleteResult } =
+        await mightFail(
+          db
+            .delete(appointmentsTable)
+            .where(
+              and(
+                eq(
+                  appointmentsTable.appointmentId,
+                  Number(deleteValues.appointmentId)
+                ),
+                eq(appointmentsTable.userId, deleteValues.userId)
+              )
+            )
+        );
+      if (appointmentDeleteError) {
+        console.log("Error while deleting appointment");
+        throw new HTTPException(500, {
+          message: "Error while deleting appointment",
+          cause: appointmentDeleteError,
+        });
+      }
+      const { result: appointmentsQueryResult, error: appointmentsQueryError } =
+        await mightFail(
+          db
+            .select()
+            .from(appointmentsTable)
+            .where(eq(appointmentsTable.userId, deleteValues.userId))
+        );
+      if (appointmentsQueryError) {
+        throw new HTTPException(500, {
+          message: "Error occurred when fetching user appointments.",
+          cause: appointmentsQueryError,
+        });
+      }
+      return c.json({ appointments: appointmentsQueryResult });
+    }
+  );
