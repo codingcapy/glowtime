@@ -10,6 +10,14 @@ type CreateAppointmentArgs = ArgumentTypes<
   typeof client.api.v0.appointments.$post
 >[0]["json"];
 
+type DeleteAppointmentArgs = ArgumentTypes<
+  typeof client.api.v0.appointments.delete.$post
+>[0]["json"];
+
+type UpdateAppointmentArgs = ArgumentTypes<
+  typeof client.api.v0.appointments.update.$post
+>[0]["json"];
+
 type SerializeAppointment = ExtractData<
   Awaited<ReturnType<typeof client.api.v0.appointments.$get>>
 >["appointments"][number];
@@ -76,3 +84,54 @@ export const getAppointmentsByUserIdQueryOptions = (args: string) =>
     queryKey: ["appointments", args],
     queryFn: () => getAppointmentsByUserId(args),
   });
+
+async function deleteAppointment(args: DeleteAppointmentArgs) {
+  const res = await client.api.v0.appointments.delete.$post({
+    json: args,
+  });
+  if (!res.ok) {
+    throw new Error("Error deleting appointment.");
+  }
+  const { appointments } = await res.json();
+  return appointments.map(mapSerializedAppointmentToSchema);
+}
+
+export const useDeleteAppointmentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteAppointment,
+    onSettled: (appointments) => {
+      if (!appointments) return;
+      queryClient.invalidateQueries({
+        queryKey: ["appointments", appointments[0].userId],
+      });
+    },
+  });
+};
+
+async function updateAppointment(args: UpdateAppointmentArgs) {
+  const res = await client.api.v0.appointments.update.$post({
+    json: args,
+  });
+  if (!res.ok) {
+    throw new Error("Error updating appointment.");
+  }
+  const { newAppointment } = await res.json();
+  return mapSerializedAppointmentToSchema(newAppointment);
+}
+
+export const useUpdateAppointmentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateAppointment,
+    onSettled: (newAppointment) => {
+      if (!newAppointment) return;
+      queryClient.invalidateQueries({
+        queryKey: ["appointments", newAppointment.userId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["appointments"],
+      });
+    },
+  });
+};

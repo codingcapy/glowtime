@@ -189,10 +189,10 @@ export const appointmentsRouter = new Hono()
       if (appointmentUpdateError) {
         console.log("Error while editing appointment");
         throw new HTTPException(500, {
-          message: "Error whileediting appointment",
+          message: "Error while editing appointment",
           cause: appointmentUpdateError,
         });
       }
-      return c.json({ newMessage: appointmentUpdateResult[0] }, 200);
+      return c.json({ newAppointment: appointmentUpdateResult[0] }, 200);
     }
   );
