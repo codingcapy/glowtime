@@ -156,4 +156,43 @@ export const appointmentsRouter = new Hono()
       }
       return c.json({ appointments: appointmentsQueryResult });
     }
+  )
+  .post(
+    "/update",
+    zValidator(
+      "json",
+      createInsertSchema(appointmentsTable).omit({
+        userId: true,
+        createdAt: true,
+      })
+    ),
+    async (c) => {
+      const updateValues = c.req.valid("json");
+      const { error: appointmentUpdateError, result: appointmentUpdateResult } =
+        await mightFail(
+          db
+            .update(appointmentsTable)
+            .set({
+              date: updateValues.date,
+              type: updateValues.type,
+              duration: updateValues.duration,
+              price: updateValues.price,
+            })
+            .where(
+              eq(
+                appointmentsTable.appointmentId,
+                Number(appointmentsTable.appointmentId)
+              )
+            )
+            .returning()
+        );
+      if (appointmentUpdateError) {
+        console.log("Error while editing appointment");
+        throw new HTTPException(500, {
+          message: "Error whileediting appointment",
+          cause: appointmentUpdateError,
+        });
+      }
+      return c.json({ newMessage: appointmentUpdateResult[0] }, 200);
+    }
   );
