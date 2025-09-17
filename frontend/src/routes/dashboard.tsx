@@ -9,8 +9,12 @@ import { LuCalendar } from "react-icons/lu";
 import BookingService from "../components/dashboard/BookingService";
 import useAuthStore from "../store/AuthStore";
 import { useQuery } from "@tanstack/react-query";
-import { getAppointmentsByUserIdQueryOptions } from "../lib/api/appointment";
+import {
+  getAppointmentsByUserIdQueryOptions,
+  useDeleteAppointmentMutation,
+} from "../lib/api/appointment";
 import { Appointment } from "../../../schemas/appointments";
+import { FaTrashAlt } from "react-icons/fa";
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
@@ -34,6 +38,7 @@ function mapAppointmentsToEvents(appointments: Appointment[]) {
 function Dashboard() {
   const { user } = useAuthStore((state) => state);
   const navigate = useNavigate();
+  const { mutate: deleteAppointment } = useDeleteAppointmentMutation();
 
   useEffect(() => {
     if (!user) navigate({ to: "/" });
@@ -58,6 +63,8 @@ function Dashboard() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [gridType, setGridType] = useState<GridMode>("dayGridMonth");
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
 
   function handleClickOutside(event: MouseEvent) {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -95,6 +102,12 @@ function Dashboard() {
             const scrollTop = containerRef.current?.scrollTop || 0;
             info.jsEvent.preventDefault();
             info.jsEvent.stopPropagation();
+            const appointment = appointments?.find(
+              (a) => String(a.appointmentId) === info.event.id
+            );
+
+            setSelectedAppointment(appointment || null);
+            console.log(appointment);
             setContextMenu({
               title: info.event.title,
               visible: true,
@@ -110,6 +123,7 @@ function Dashboard() {
             const dateStr = clickedDate.toISOString().split("T")[0]; // YYYY-MM-DD
             const timeStr = clickedDate.toTimeString().slice(0, 5); // HH:mm
             setSelectedDate(dateStr);
+            setSelectedAppointment(null);
             if (gridType === "timeGridWeek" || gridType === "timeGridDay") {
               setSelectedTime(timeStr);
             } else {
@@ -138,12 +152,27 @@ function Dashboard() {
             </div>
             <div className="p-1">
               {contextMenu.isEvent ? (
-                <div
-                  onClick={() => setShowBookingService(true)}
-                  className="flex p-3 cursor-pointer hover:bg-[#5b5b5b] transition-all ease-in-out duration-300"
-                >
-                  <LuCalendar className="mr-2 mt-1" />
-                  <div>Edit Appointment</div>
+                <div>
+                  <div
+                    onClick={() => setShowBookingService(true)}
+                    className="flex p-3 cursor-pointer hover:bg-[#5b5b5b] transition-all ease-in-out duration-300"
+                  >
+                    <LuCalendar className="mr-2 mt-1" />
+                    <div>Edit Appointment</div>
+                  </div>
+                  <div
+                    onClick={() => {
+                      deleteAppointment({
+                        userId: selectedAppointment?.userId || "",
+                        appointmentId: selectedAppointment?.appointmentId || 0,
+                      });
+                      setContextMenu(null);
+                    }}
+                    className="flex p-3 cursor-pointer hover:bg-[#5b5b5b] transition-all ease-in-out duration-300 text-red-400"
+                  >
+                    <FaTrashAlt className="mr-2 mt-1" />
+                    <div>Delete Appointment</div>
+                  </div>
                 </div>
               ) : (
                 <div
@@ -165,6 +194,7 @@ function Dashboard() {
             setSelectedTime={setSelectedTime}
             selectedDate={selectedDate}
             gridType={gridType}
+            selectedAppointment={selectedAppointment}
           />
         )}
       </main>

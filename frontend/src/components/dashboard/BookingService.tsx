@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import useAuthStore from "../../store/AuthStore";
-import { useCreateAppointmentMutation } from "../../lib/api/appointment";
+import {
+  useCreateAppointmentMutation,
+  useUpdateAppointmentMutation,
+} from "../../lib/api/appointment";
 import { GridMode } from "../../routes/dashboard";
+import { Appointment } from "../../../../schemas/appointments";
 
 type AppointmentSubtype = "haircut" | "hairdye";
 
@@ -12,10 +16,12 @@ export default function BookingService(props: {
   selectedTime: string;
   setSelectedTime: React.Dispatch<React.SetStateAction<string>>;
   gridType: GridMode;
+  selectedAppointment: Appointment | null;
 }) {
   const { user } = useAuthStore((state) => state);
   const { mutate: createAppointment } = useCreateAppointmentMutation();
-  const [subtype, setSubtype] = useState<AppointmentSubtype>("haircut");
+  const { mutate: updateAppointment } = useUpdateAppointmentMutation();
+  const [subtype, setSubtype] = useState<string>("haircut");
   const bookingServiceRef = useRef<HTMLDivElement | null>(null);
   const [notification, setNotification] = useState("");
 
@@ -32,6 +38,15 @@ export default function BookingService(props: {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!props.selectedAppointment) return;
+    setSubtype(props.selectedAppointment.type);
+    const dateObj = new Date(props.selectedAppointment.date);
+    const hours = dateObj.getHours().toString().padStart(2, "0");
+    const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+    props.setSelectedTime(`${hours}:${minutes}`);
+  }, [props.selectedAppointment]);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -73,16 +88,36 @@ export default function BookingService(props: {
       duration: duration,
       price: price,
     };
-    createAppointment(newAppointment, {
-      onSuccess: (result) => {
-        setNotification("Appointment added successfully!");
-        props.setShowBookingService(false);
-      },
-      onError: (errorMessage) => {
-        setNotification(errorMessage.toString());
-        console.log(newAppointment);
-      },
-    });
+    if (!props.selectedAppointment) {
+      createAppointment(newAppointment, {
+        onSuccess: (result) => {
+          setNotification("Appointment added successfully!");
+          props.setShowBookingService(false);
+        },
+        onError: (errorMessage) => {
+          setNotification(errorMessage.toString());
+        },
+      });
+    } else {
+      updateAppointment(
+        {
+          appointmentId: props.selectedAppointment.appointmentId,
+          date: date.toISOString(),
+          type: subtype,
+          duration: duration,
+          price: price,
+        },
+        {
+          onSuccess: (result) => {
+            setNotification("Appointment updated successfully!");
+            props.setShowBookingService(false);
+          },
+          onError: (errorMessage) => {
+            setNotification(errorMessage.toString());
+          },
+        }
+      );
+    }
   }
 
   return (

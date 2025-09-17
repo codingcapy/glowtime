@@ -5,7 +5,7 @@ import { appointments as appointmentsTable } from "../schemas/appointments";
 import { HTTPException } from "hono/http-exception";
 import { eq, and } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import z from "zod";
 
 export const appointmentsRouter = new Hono()
@@ -161,19 +161,30 @@ export const appointmentsRouter = new Hono()
     "/update",
     zValidator(
       "json",
-      createInsertSchema(appointmentsTable).omit({
-        userId: true,
-        createdAt: true,
-      })
+      createUpdateSchema(appointmentsTable)
+        .omit({
+          userId: true,
+          createdAt: true,
+        })
+        .extend({
+          date: z.union([z.date(), z.string().datetime()]),
+        })
     ),
     async (c) => {
       const updateValues = c.req.valid("json");
+      if (!updateValues.appointmentId) {
+        return c.json({ error: "appointmentId parameter is required." }, 400);
+      }
+      const appointmentDate =
+        typeof updateValues.date === "string"
+          ? new Date(updateValues.date)
+          : updateValues.date;
       const { error: appointmentUpdateError, result: appointmentUpdateResult } =
         await mightFail(
           db
             .update(appointmentsTable)
             .set({
-              date: updateValues.date,
+              date: appointmentDate,
               type: updateValues.type,
               duration: updateValues.duration,
               price: updateValues.price,
@@ -181,7 +192,7 @@ export const appointmentsRouter = new Hono()
             .where(
               eq(
                 appointmentsTable.appointmentId,
-                Number(appointmentsTable.appointmentId)
+                Number(updateValues.appointmentId)
               )
             )
             .returning()
