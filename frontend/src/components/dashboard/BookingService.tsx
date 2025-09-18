@@ -15,6 +15,7 @@ export default function BookingService(props: {
   selectedDate: string | null;
   selectedTime: string;
   setSelectedTime: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedDate: React.Dispatch<React.SetStateAction<string | null>>;
   gridType: GridMode;
   selectedAppointment: Appointment | null;
 }) {
@@ -46,6 +47,7 @@ export default function BookingService(props: {
     const hours = dateObj.getHours().toString().padStart(2, "0");
     const minutes = dateObj.getMinutes().toString().padStart(2, "0");
     props.setSelectedTime(`${hours}:${minutes}`);
+    props.setSelectedDate(dateObj.toISOString().split("T")[0]);
   }, [props.selectedAppointment]);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

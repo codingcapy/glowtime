@@ -193,6 +193,7 @@ function Dashboard() {
             selectedTime={selectedTime}
             setSelectedTime={setSelectedTime}
             selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
             gridType={gridType}
             selectedAppointment={selectedAppointment}
           />
