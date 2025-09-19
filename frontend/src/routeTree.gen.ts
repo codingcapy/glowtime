@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetRouteImport } from './routes/reset'
-import { Route as MainRouteImport } from './routes/main'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as HeaderRouteImport } from './routes/_header'
 import { Route as IndexRouteImport } from './routes/index'
@@ -22,11 +21,6 @@ import { Route as HeaderAboutRouteImport } from './routes/_header.about'
 const ResetRoute = ResetRouteImport.update({
   id: '/reset',
   path: '/reset',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MainRoute = MainRouteImport.update({
-  id: '/main',
-  path: '/main',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -67,7 +61,6 @@ const HeaderAboutRoute = HeaderAboutRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/main': typeof MainRoute
   '/reset': typeof ResetRoute
   '/about': typeof HeaderAboutRoute
   '/contact': typeof HeaderContactRoute
@@ -77,7 +70,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/main': typeof MainRoute
   '/reset': typeof ResetRoute
   '/about': typeof HeaderAboutRoute
   '/contact': typeof HeaderContactRoute
@@ -89,7 +81,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_header': typeof HeaderRouteWithChildren
   '/dashboard': typeof DashboardRoute
-  '/main': typeof MainRoute
   '/reset': typeof ResetRoute
   '/_header/about': typeof HeaderAboutRoute
   '/_header/contact': typeof HeaderContactRoute
@@ -101,7 +92,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
-    | '/main'
     | '/reset'
     | '/about'
     | '/contact'
@@ -111,7 +101,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dashboard'
-    | '/main'
     | '/reset'
     | '/about'
     | '/contact'
@@ -122,7 +111,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_header'
     | '/dashboard'
-    | '/main'
     | '/reset'
     | '/_header/about'
     | '/_header/contact'
@@ -134,7 +122,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HeaderRoute: typeof HeaderRouteWithChildren
   DashboardRoute: typeof DashboardRoute
-  MainRoute: typeof MainRoute
   ResetRoute: typeof ResetRoute
 }
 
@@ -145,13 +132,6 @@ declare module '@tanstack/react-router' {
       path: '/reset'
       fullPath: '/reset'
       preLoaderRoute: typeof ResetRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/main': {
-      id: '/main'
-      path: '/main'
-      fullPath: '/main'
-      preLoaderRoute: typeof MainRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -227,7 +207,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HeaderRoute: HeaderRouteWithChildren,
   DashboardRoute: DashboardRoute,
-  MainRoute: MainRoute,
   ResetRoute: ResetRoute,
 }
 export const routeTree = rootRouteImport
